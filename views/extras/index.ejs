@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Extras</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+  <%- include('../partials/header') %>
+
+  <div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-red-500">Extras</h1>
+      <button onclick="toggleForm()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow">
+        + Nuevo Extra
+      </button>
+    </div>
+
+    <!-- Formulario oculto para nuevo extra -->
+    <div id="formNuevo" class="bg-gray-800 rounded-lg shadow p-4 mb-6 hidden">
+      <form action="/extras/nuevo" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <input type="text" name="nombre" placeholder="Nombre del extra" required class="bg-gray-900 border border-red-500 text-white rounded px-3 py-2 w-full" />
+        <input type="number" name="precio" placeholder="Precio" step="0.01" required class="bg-gray-900 border border-red-500 text-white rounded px-3 py-2 w-full" />
+        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow">
+          Guardar
+        </button>
+      </form>
+    </div>
+
+    <!-- Tabla de extras -->
+    <div class="bg-gray-800 rounded-lg shadow overflow-x-auto">
+      <table class="w-full table-auto">
+        <thead class="bg-gray-700 text-red-400">
+          <tr>
+            <th class="text-left px-4 py-2">#</th>
+            <th class="text-left px-4 py-2">Nombre</th>
+            <th class="text-left px-4 py-2">Precio</th>
+            <th class="text-center px-4 py-2">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (extras.length === 0) { %>
+            <tr>
+              <td colspan="4" class="text-center text-gray-400 py-4">No hay extras registrados.</td>
+            </tr>
+          <% } %>
+          <% extras.forEach((extra, index) => { %>
+            <tr class="border-b border-gray-700 hover:bg-gray-700">
+              <td class="px-4 py-2"><%= index + 1 %></td>
+              <td class="px-4 py-2"><%= extra.nombre %></td>
+              <td class="px-4 py-2">₲ <%= extra.precio %></td>
+              <td class="px-4 py-2 text-center">
+                <form action="/extras/eliminar/<%= extra.id_extra %>" method="POST" onsubmit="return confirm('¿Eliminar este extra?')">
+                  <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm shadow">
+                    Eliminar
+                  </button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function toggleForm() {
+      const form = document.getElementById('formNuevo');
+      form.classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>

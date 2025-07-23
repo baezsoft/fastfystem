@@ -1,0 +1,51 @@
+<header class="bg-gray-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+      <!-- Logo + Título -->
+      <a href="/" class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+          <span class="text-lg font-bold">F</span>
+        </div>
+        <span class="font-semibold text-xl">FastSystemBSoft</span>
+      </a>
+  
+      <!-- Botón móvil -->
+      <button id="menu-btn" class="md:hidden focus:outline-none">
+        <svg class="w-6 h-6 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+  
+      <!-- Menú -->
+      <nav id="menu" class="hidden md:flex space-x-6">
+        <a href="/categorias" class="hover:text-red-400">Categorias</a>
+        <a href="/extras" class="hover:text-red-400">Extras</a>
+        <a href="/menus" class="hover:text-red-400">Menús</a>
+        <a href="/pedidos/pendientes" class="hover:text-red-400">Pedidos</a>
+        <a href="/pedidos/entregados" class="hover:text-red-400">Historial de Pedidos</a>
+
+        <a href="/empleados" class="hover:text-red-400">empleados</a>
+        <a href="/empleados/logout" class="text-red-500 hover:text-red-400 border border-red-500 px-3 py-1 rounded">Salir</a>
+      </nav>
+    </div>
+  
+    <!-- Menú responsive -->
+    <div id="menu-mobile" class="hidden md:hidden bg-gray-800">
+      <a href="/categorias" class="block px-4 py-2 border-b border-gray-700 hover:bg-gray-700">Categorias</a>
+
+      <a href="/extras" class="block px-4 py-2 border-b border-gray-700 hover:bg-gray-700">Extras</a>
+      <a href="/menus" class="block px-4 py-2 border-b border-gray-700 hover:bg-gray-700">Menús</a>
+      <a href="/pedidos/pendientes" class="block px-4 py-2 border-b border-gray-700 hover:bg-gray-700">Pedidos</a>
+      <a href="/pedidos/entregados" class="block px-4 py-2 border-b border-gray-700 hover:bg-gray-700">Historial Pedidos</a>
+      <a href="/empleados" class="block px-4 py-2 border-b border-gray-700 hover:bg-gray-700">Empleados</a>
+      <a href="/empleados/logout" class="block px-4 py-2 hover:bg-gray-700 text-red-500">Salir</a>
+    </div>
+  
+    <script>
+      document.getElementById('menu-btn').addEventListener('click', () => {
+        const menu = document.getElementById('menu-mobile');
+        menu.classList.toggle('hidden');
+      });
+    </script>
+  </header>
+  

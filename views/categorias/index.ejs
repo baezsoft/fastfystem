@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categorías</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen p-4">
+
+  <%- include('../partials/header') %>
+
+  <main class="max-w-4xl mx-auto space-y-8">
+    <h1 class="text-3xl font-semibold text-red-500 text-center">Gestión de Categorías</h1>
+
+    <!-- Formulario -->
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h2 class="text-xl font-medium text-red-400 mb-4">Agregar nueva categoría</h2>
+      <form action="/categorias/nuevo" method="POST" class="flex flex-wrap gap-4">
+        <input type="text" name="nombre" placeholder="Nombre de la categoría" required
+               class="flex-1 bg-gray-700 text-gray-200 border border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+        <button type="submit"
+                class="bg-red-600 hover:bg-red-700 text-white rounded px-6 py-2 font-semibold transition">
+          Agregar
+        </button>
+      </form>
+    </div>
+
+    <!-- Tabla -->
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg overflow-x-auto">
+      <h2 class="text-xl font-medium text-red-400 mb-4">Listado de categorías</h2>
+      <table class="min-w-full text-left">
+        <thead class="bg-gray-700">
+          <tr>
+            <th class="px-4 py-2 text-gray-200">ID</th>
+            <th class="px-4 py-2 text-gray-200">Nombre</th>
+            <th class="px-4 py-2 text-gray-200">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% categorias.forEach(c => { %>
+            <tr class="border-t border-gray-700 hover:bg-gray-700 transition">
+              <td class="px-4 py-2"><%= c.id_categoria %></td>
+              <td class="px-4 py-2"><%= c.nombre %></td>
+              <td class="px-4 py-2 space-x-2">
+                <a href="/categorias/editar/<%= c.id_categoria %>"
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition">
+                  Editar
+                </a>
+
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+</body>
+</html>

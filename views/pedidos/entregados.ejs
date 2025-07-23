@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pedidos Entregados</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-800 text-gray-900 min-h-screen p-6">
+    <%- include('../partials/header') %>
+
+  <h1 class="text-3xl font-bold mb-6 text-center text-white">Pedidos Entregados</h1>
+
+  <!-- Filtros -->
+  <form method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4 bg-white p-4 rounded-lg shadow mb-6">
+    <div>
+      <label class="block text-sm font-medium mb-1">Desde:</label>
+      <input type="date" name="fecha_inicio" value="<%= filtros.fecha_inicio || '' %>" class="w-full px-2 py-1 border rounded">
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">Hasta:</label>
+      <input type="date" name="fecha_fin" value="<%= filtros.fecha_fin || '' %>" class="w-full px-2 py-1 border rounded">
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">Empleado:</label>
+      <select name="id_empleado" class="w-full px-2 py-1 border rounded">
+        <option value="">Todos</option>
+        <% empleados.forEach(emp => { %>
+          <option value="<%= emp.id_empleado %>" <%= filtros.id_empleado == emp.id_empleado ? 'selected' : '' %>>
+            <%= emp.nombre %>
+          </option>
+        <% }) %>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">Orden por costo:</label>
+      <select name="orden" class="w-full px-2 py-1 border rounded">
+        <option value="DESC" <%= filtros.orden === 'DESC' ? 'selected' : '' %>>Mayor a menor</option>
+        <option value="ASC" <%= filtros.orden === 'ASC' ? 'selected' : '' %>>Menor a mayor</option>
+      </select>
+    </div>
+    <div class="flex items-end">
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full">
+        Filtrar
+      </button>
+    </div>
+  </form>
+
+  <!-- Lista de pedidos -->
+  <% if (pedidos.length === 0) { %>
+    <p class="text-center text-gray-500">No hay pedidos entregados con esos filtros.</p>
+  <% } else { %>
+    <div class="space-y-6">
+      <% pedidos.forEach(pedido => { %>
+        <div class="bg-white p-4 rounded-lg shadow">
+          <div class="flex justify-between items-center mb-2">
+            <h2 class="text-lg font-semibold">Pedido #<%= pedido.id_pedido %></h2>
+            <span class="text-sm text-gray-500"><%= new Date(pedido.fecha).toLocaleDateString() %></span>
+          </div>
+
+          <p class="text-sm text-gray-700">Cliente: <strong><%= pedido.cliente %></strong></p>
+          <p class="text-sm text-gray-700">Empleado: <strong><%= pedido.empleado %></strong></p>
+          <p class="text-sm text-gray-700 mb-2">Total: <strong>Gs. <%= pedido.costo.toLocaleString() %></strong></p>
+
+          <!-- Detalles del pedido -->
+          <ul class="space-y-2">
+            <% pedido.detalles.forEach(det => { %>
+              <li class="border rounded p-2 bg-gray-50">
+                <div class="flex justify-between">
+                  <span><strong><%= det.menu %></strong> × <%= det.cantidad %></span>
+                  <span>Gs. <%= (det.precio_unitario * det.cantidad).toLocaleString() %></span>
+                </div>
+
+                <% if (det.extras.length > 0) { %>
+                  <div class="ml-4 mt-1 text-sm text-gray-600">
+                    <p>Extras:</p>
+                    <ul class="list-disc list-inside">
+                      <% det.extras.forEach(extra => { %>
+                        <li><%= extra.nombre %> (+ Gs. <%= extra.precio.toLocaleString() %>)</li>
+                      <% }) %>
+                    </ul>
+                  </div>
+                <% } %>
+              </li>
+            <% }) %>
+          </ul>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+</body>
+</html>

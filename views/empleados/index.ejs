@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Empleados - Lista</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+
+  <%- include('../partials/header') %>
+
+  <main class="max-w-4xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-red-500 mb-6">Lista de Empleados</h1>
+
+    <div class="overflow-x-auto bg-gray-800 rounded-lg shadow-lg mb-8">
+      <table class="table-auto w-full text-left">
+        <thead class="bg-gradient-to-r from-gray-800 to-red-700 text-red-300">
+          <tr>
+            <th class="px-4 py-3">ID</th>
+            <th class="px-4 py-3">Nombre</th>
+            <th class="px-4 py-3">Rol</th>
+            <th class="px-4 py-3">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% empleados.forEach(e => { %>
+            <tr class="border-t border-gray-700 hover:bg-gray-700 transition">
+              <td class="px-4 py-2"><%= e.id_empleado %></td>
+              <td class="px-4 py-2"><%= e.nombre %></td>
+              <td class="px-4 py-2 capitalize"><%= e.rol %></td>
+              <td class="px-4 py-2">
+                <form action="/empleados/eliminar/<%= e.id_empleado %>" method="POST"
+                      onsubmit="return confirm('¿Eliminar empleado <%= e.nombre %>?');">
+                  <button type="submit"
+                          class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">
+                    Eliminar
+                  </button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="text-2xl font-semibold text-red-500 mb-4">Agregar Nuevo Empleado</h2>
+    <form action="/empleados/nuevo" method="POST" class="space-y-4 bg-gray-800 p-6 rounded-lg shadow-md">
+      <div>
+        <label class="block text-gray-300 mb-1">Nombre:</label>
+        <input type="text" name="nombre" required
+               class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-red-500">
+      </div>
+
+      <div>
+        <label class="block text-gray-300 mb-1">Contraseña:</label>
+        <input type="password" name="password" required
+               class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-red-500">
+      </div>
+
+      <div>
+        <label class="block text-gray-300 mb-1">Rol:</label>
+        <select name="rol" required
+                class="w-full px-3 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-red-500">
+          <option value="admin">Admin</option>
+          <option value="usuario">Usuario</option>
+        </select>
+      </div>
+
+      <button type="submit"
+              class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded">
+        Crear empleado
+      </button>
+    </form>
+
+    <div class="mt-8 text-center">
+      <a href="/empleados/login"
+         class="text-red-400 hover:text-white border border-red-500 px-4 py-2 rounded">
+        Cerrar sesión / Volver a login
+      </a>
+    </div>
+  </main>
+
+</body>
+</html>

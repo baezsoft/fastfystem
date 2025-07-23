@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Menús - <%= categoria.nombre %>
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+    <%- include('../partials/header') %>
+        <!-- Panel lateral del carrito -->
+        <div id="carritoPanel"
+            class="fixed top-0 left-0 h-full w-72 bg-gray-800 text-gray-100 shadow-lg transform -translate-x-full transition-transform duration-300 z-50">
+            <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+                <div id="totalCarrito" class="text-right font-semibold text-red-500 mb-2">
+                    Total: ₲ 0
+                </div>
+                <h2 class="text-lg font-bold">Tu Pedido</h2>
+                <button id="cerrarCarrito" class="text-red-400 hover:text-red-500 font-bold">&times;</button>
+            </div>
+            <div id="contenidoCarrito" class="p-4 overflow-y-auto h-[calc(100%-6rem)]">
+                <p class="text-gray-400">No hay productos en el carrito.</p>
+            </div>
+            <div class="p-4 border-t border-gray-700">
+
+                <button id="culminarDesdePanel"
+                    class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition">
+                    Culminar Pedido
+                </button>
+            </div>
+
+        </div>
+        <h1 class="text-3xl font-bold text-gray-100">Menús - <%= categoria.nombre %>
+        </h1>
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center mb-4">
+
+                <button id="abrirCarrito" class="bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-600 transition">
+                    🛒 Ver Carrito
+                </button>
+                <% if (user) { %>
+
+                    <button id="btnCulminar"
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+                        Culminar pedido (<span id="contadorCarrito">0</span>)
+                    </button>
+                    <% } %>
+            </div>
+            <a href="/menus" class="text-red-400 hover:text-red-500">← Volver a Categorías</a>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <% if (menus.length===0) { %>
+                    <div class="col-span-full text-center text-gray-400">
+                        No hay menús para esta categoría.
+                    </div>
+                    <% } %>
+
+                        <% menus.forEach(menu=> { %>
+                            <div
+                                class="bg-gray-800 text-gray-100 rounded-2xl shadow-xl p-4 flex flex-col justify-between hover:shadow-2xl transition duration-300">
+                                <div>
+                                    <% if (menu.imagen) { %>
+                                        <img src="<%= menu.imagen %>" alt="Imagen de <%= menu.nombre %>"
+                                            class="w-full h-40 object-cover rounded-xl mb-3">
+                                        <% } %>
+
+                                            <h2 class="text-xl font-semibold mb-2">
+                                                <%= menu.nombre %>
+                                            </h2>
+                                            <p class="text-sm text-gray-400 mb-2">Ingredientes: <%= menu.ingredientes %>
+                                            </p>
+                                            <p class="text-lg font-bold text-red-500">₲ <%= menu.precio %>
+                                            </p>
+                                </div>
+
+                                <div class="mt-4 flex justify-between space-x-2">
+                                    <% if (user) { %>
+                                        <button
+                                            class="btnAgregarCarrito bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 text-sm transition"
+                                            data-idmenu="<%= menu.id_menu %>" data-nombre="<%= menu.nombre %>"
+                                            data-precio="<%= menu.precio %>">
+                                            Agregar
+                                        </button>
+
+                                        <form action="/menus/eliminar/<%= menu.id_menu %>" method="POST"
+                                            onsubmit="return confirm('¿Eliminar este menú?')">
+                                            <button
+                                                class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-lg text-sm transition">
+                                                Eliminar
+                                            </button>
+                                        </form>
+
+                                        <a href="/menus/editar/<%= menu.id_menu %>"
+                                            class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-lg text-sm transition">
+                                            Editar
+                                        </a>
+                                        <% } %>
+                                </div>
+                            </div>
+                            <% }) %>
+            </div>
+
+            <% if (user) { %>
+                <a href="/menus/nuevo"
+                    class="fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-full shadow-lg text-lg font-bold transition">
+                    + Nuevo
+                </a>
+                <% } %>
+        </div>
+
+        <!-- Modal Culminar pedido -->
+        <div id="modalCulminar" class="fixed inset-0 bg-black bg-opacity-70 hidden justify-center items-center">
+            <div class="bg-gray-800 text-gray-100 rounded p-6 max-w-md w-full">
+                <h2 class="text-xl font-bold mb-4 text-red-400">Culminar pedido</h2>
+                <label for="nombreCliente" class="block mb-2 font-semibold">Nombre del cliente (opcional)</label>
+                <input id="nombreCliente" type="text"
+                    class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    placeholder="Nombre del cliente" />
+                <div class="flex justify-end space-x-3">
+                    <button id="btnCancelar" class="px-4 py-2 rounded bg-gray-600 hover:bg-gray-500">
+                        Cancelar
+                    </button>
+                    <button id="btnConfirmar" class="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white">
+                        Confirmar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para elegir extras -->
+        <div id="modalExtras" class="fixed inset-0 bg-black bg-opacity-70 hidden justify-center items-center z-50">
+            <div class="bg-gray-800 text-gray-100 rounded p-6 w-full max-w-lg">
+                <h2 class="text-xl font-bold mb-4 text-red-400">Seleccionar Extras</h2>
+                <form id="formExtras" class="space-y-3">
+                    <input type="hidden" id="idMenuSeleccionado" />
+                    <input type="hidden" id="nombreMenuSeleccionado" />
+                    <input type="hidden" id="precioMenuSeleccionado" />
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-60 overflow-y-auto">
+                        <% extras.forEach(extra=> { %>
+                            <label
+                                class="flex items-center space-x-2 border border-gray-700 rounded px-3 py-2 hover:bg-gray-700 transition">
+                                <input type="checkbox" name="extras" value="<%= extra.id_extra %>"
+                                    data-nombre="<%= extra.nombre %>" data-precio="<%= extra.precio %>"
+                                    class="form-checkbox h-5 w-5 text-red-500" />
+                                <span>
+                                    <%= extra.nombre %> - ₲ <%= extra.precio %>
+                                </span>
+                            </label>
+                            <% }) %>
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-4">
+                        <button type="button" id="cancelarExtras"
+                            class="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                            Agregar al carrito
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            // Carrito local
+            const carrito = [];
+
+            // Actualizar contador carrito
+            function actualizarContador() {
+                document.getElementById('contadorCarrito').textContent = carrito.length;
+            }
+
+            const panel = document.getElementById('carritoPanel');
+            const btnAbrir = document.getElementById('abrirCarrito');
+            const btnCerrar = document.getElementById('cerrarCarrito');
+            const contenidoCarrito = document.getElementById('contenidoCarrito');
+            const btnDesdePanel = document.getElementById('culminarDesdePanel');
+
+            // Mostrar panel
+            btnAbrir.addEventListener('click', () => {
+                panel.classList.remove('-translate-x-full');
+            });
+
+            // Cerrar panel
+            btnCerrar.addEventListener('click', () => {
+                panel.classList.add('-translate-x-full');
+            });
+            function renderizarCarrito() {
+                if (carrito.length === 0) {
+                    contenidoCarrito.innerHTML = '<p class="text-gray-500">No hay productos en el carrito.</p>';
+                    return;
+                }
+
+                contenidoCarrito.innerHTML = carrito.map((item, index) => `
+        <div class="border-b py-2 flex justify-between items-center">
+          <div>
+            <p class="font-semibold">${item.nombre}</p>
+            <p class="text-sm text-gray-600">Cantidad: ${item.cantidad}</p>
+            ${item.extras?.length > 0 ? `<ul class="text-sm text-gray-500 pl-4">
+              ${item.extras.map(extra => `<li>- ${extra.nombre} (₲${extra.precio})</li>`).join('')}
+            </ul>` : ''}
+          </div>
+          <button 
+            class="text-red-500 hover:text-red-700 font-bold ml-4"
+            data-index="${index}"
+            aria-label="Eliminar del carrito"
+          >
+            &times;
+          </button>
+        </div>
+    `).join('');
+
+                // Agregar event listener a cada botón eliminar recién generado
+                document.querySelectorAll('#contenidoCarrito button[data-index]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const idx = parseInt(e.currentTarget.dataset.index);
+                        carrito.splice(idx, 1); // Eliminar ítem del carrito
+                        actualizarContador();
+                        renderizarCarrito();
+                    });
+                });
+            }
+
+
+            // Modifica evento Agregar para que también renderice el panel
+            // Al hacer click en Agregar, abrimos el modal de extras
+            document.querySelectorAll('.btnAgregarCarrito').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('idMenuSeleccionado').value = btn.dataset.idmenu;
+                    document.getElementById('nombreMenuSeleccionado').value = btn.dataset.nombre;
+                    document.getElementById('precioMenuSeleccionado').value = btn.dataset.precio;
+
+                    // Desmarcar todos los extras
+                    document.querySelectorAll('#formExtras input[name="extras"]').forEach(chk => chk.checked = false);
+
+                    document.getElementById('modalExtras').classList.remove('hidden');
+                    document.getElementById('modalExtras').classList.add('flex');
+                });
+            });
+            document.getElementById('cancelarExtras').addEventListener('click', () => {
+                document.getElementById('modalExtras').classList.add('hidden');
+                document.getElementById('modalExtras').classList.remove('flex');
+            });
+
+            document.getElementById('formExtras').addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const id_menu = document.getElementById('idMenuSeleccionado').value;
+                const nombre = document.getElementById('nombreMenuSeleccionado').value;
+                const precio = parseFloat(document.getElementById('precioMenuSeleccionado').value);
+
+                const extrasSeleccionados = Array.from(document.querySelectorAll('#formExtras input[name="extras"]:checked')).map(chk => ({
+                    id_extra: chk.value,
+                    nombre: chk.dataset.nombre,
+                    precio: parseFloat(chk.dataset.precio)
+                }));
+
+                const index = carrito.findIndex(item => item.id_menu === id_menu && JSON.stringify(item.extras) === JSON.stringify(extrasSeleccionados));
+
+                if (index >= 0) {
+                    carrito[index].cantidad++;
+                } else {
+                    carrito.push({ id_menu, nombre, precio, cantidad: 1, extras: extrasSeleccionados });
+                }
+
+                actualizarUICarrito();
+
+                document.getElementById('modalExtras').classList.add('hidden');
+                document.getElementById('modalExtras').classList.remove('flex');
+            });
+
+
+
+            // Culminar desde panel
+            btnDesdePanel.addEventListener('click', () => {
+                document.getElementById('btnCulminar')?.click();
+            });
+            // Abrir modal culminar pedido
+            const modal = document.getElementById('modalCulminar');
+            document.getElementById('btnCulminar')?.addEventListener('click', () => {
+                if (carrito.length === 0) {
+                    alert('El carrito está vacío');
+                    return;
+                }
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            });
+
+            // Cancelar modal
+            document.getElementById('btnCancelar').addEventListener('click', () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            });
+
+            // Confirmar pedido
+            document.getElementById('btnConfirmar').addEventListener('click', () => {
+                const nombreCliente = document.getElementById('nombreCliente').value.trim();
+
+                // Preparar payload
+                const payload = {
+                    id_cliente: nombreCliente ? nombreCliente : null, // aquí puedes decidir cómo manejar clientes no registrados
+                    id_empleado: <%= user.id_empleado %>, // Usar id_empleado del usuario logueado
+                    items: carrito.map(item => ({
+                        id_menu: item.id_menu,
+                        cantidad: item.cantidad,
+                        precio: item.precio,
+                        extras: item.extras || []
+                    }))
+
+                };
+
+                // Enviar a backend
+                fetch('/pedidos/nuevo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
+                    .then(res => {
+                        if (!res.ok) throw new Error('Error al crear pedido');
+                        return res.json();
+                    })
+                    .then(data => {
+                        alert('Pedido creado con éxito! ID: ' + data.id_pedido);
+                        carrito.length = 0;
+                        actualizarContador();
+                        modal.classList.add('hidden');
+                        modal.classList.remove('flex');
+                    })
+                    .catch(err => {
+                        alert(err.message);
+                    });
+            });
+            function calcularTotal() {
+                return carrito.reduce((sum, item) => {
+                    // Suma precios de extras
+                    const extras = item.extras?.reduce((s, e) => s + e.precio, 0) || 0;
+                    return sum + (item.precio + extras) * item.cantidad;
+                }, 0);
+            }
+            function actualizarUICarrito() {
+                renderizarCarrito(); // ya actualiza el contenido visual
+                actualizarContador(); // actualiza el contador
+                document.getElementById('totalCarrito').textContent =
+                    'Total: ₲ ' + calcularTotal().toLocaleString();
+            }
+
+        </script>
+
+</body>
+
+</html>

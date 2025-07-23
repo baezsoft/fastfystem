@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pedidos Pendientes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+
+  <%- include('../partials/header') %>
+
+  <main class="max-w-4xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-red-500 mb-6 text-center">Pedidos Pendientes</h1>
+
+    <% if (pedidos.length === 0) { %>
+      <p class="text-center text-gray-400">No hay pedidos pendientes.</p>
+    <% } %>
+
+    <div class="space-y-6">
+      <% pedidos.forEach(pedido => { %>
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+          <div class="flex justify-between items-center bg-white px-6 py-3">
+            <div>
+              <h3 class="text-xl font-semibold text-black">
+                Pedido #<%= pedido.id_pedido %>
+                <span class="text-green-400 text-base ml-4">Total: ₲ 
+                  <%= pedido.detalles.reduce((acc, detalle) => {
+                    const extrasTotal = detalle.extras?.reduce((sum, extra) => sum + extra.precio, 0) || 0;
+                    return acc + (detalle.precio_unitario + extrasTotal) * detalle.cantidad;
+                  }, 0).toLocaleString('es-PY') %>
+                </span>
+              </h3>
+              <p class="text-sm text-gray-400">Estado: <%= pedido.estado %></p>
+              
+            </div>
+            <form action="/pedidos/entregado/<%= pedido.id_pedido %>" method="POST">
+              <button type="submit"
+                      class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                Marcar Entregado
+              </button>
+            </form>
+          </div>
+
+          <div class="px-6 py-4 space-y-3 bg-white">
+            <% pedido.detalles.forEach(detalle => { %>
+              <div class="border-b border-white pb-3">
+                <p class="text-lg text-black font-medium"><%= detalle.menu %> <span class="text-black-400">x<%= detalle.cantidad %></span></p>
+                <p class="text-sm text-black mb-1">₲ <%= detalle.precio_unitario %></p>
+
+                <% if (detalle.extras && detalle.extras.length) { %>
+                  <ul class="ml-4 text-gray-500 italic list-disc list-inside">
+                    <% detalle.extras.forEach(extra => { %>
+                      <li><%= extra.nombre %> – ₲ <%= extra.precio %></li>
+                    <% }) %>
+                  </ul>
+                <% } %>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+
+</body>
+</html>

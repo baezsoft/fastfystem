@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login Empleados</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+<body>
+  <h1>Login de Empleados</h1>
+
+  <form action="/empleados/login" method="POST">
+    <label>
+      Nombre:
+      <input type="text" name="nombre" required />
+    </label><br/><br/>
+    <label>
+      Contraseña:
+      <input type="password" name="password" required />
+    </label><br/><br/>
+    <button type="submit">Iniciar sesión</button>
+  </form>
+
+  <% if (typeof error !== 'undefined') { %>
+    <p style="color: red;"><%= error %></p>
+  <% } %>
+</body>
+</html>
